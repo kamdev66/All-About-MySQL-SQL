@@ -1,0 +1,72 @@
+--------edureka----------
+
+Ques:- what is the difference b/w DELETE and TRUNACTE statements?
+DELETE:-
+Delete command is used to delete a row in a table.
+you can rollback data after using delete statement.
+It is a DML command.
+It is slower than truncate statement.
+
+TRUNACTE:-
+truncate is used to delete all the rows from a table.
+you cannot rollback data.
+It is a DDL command.
+It is faster.
+---------------------
+
+Ques:- what are the different subsets of SQL?
+1.DDL:- Consists of the commands that can be used to define the database schema.
+2.DML:- Consists of commands that deals with the manipulation of data present is database.
+3.DCL:- Includes commands which deals with the rights,permission and other controls of the database system.
+4.TCL:- Includes the commands which mainly deals with the transaction of database.
+---------------------
+
+Ques:- what do you table and field in SQL?
+:-Table:-A table refers to a collection of data in an organised manner in form of rows and columns.
+:-Field:-A field refers to the number of columns in a table.
+----------------------
+
+Ques:- What are joins in SQL?
+:-A JOIN clause is used to combine rows from two or more tables,based on a related column bwtween them.It is used to merge two tables or retrieve data from there.
+There are 4 joins in SQL namely:
+1.INNER JOIN
+2.FULL JOIN
+3.LEFT JOIN
+4.RIGHT JOIN
+-----------------------
+
+Ques:- What is the difference b/w CHAR and VARCHAR2 datatype in SQL?
+:-Char:- Char is used for strings of fixed length. For eg:- char(10) can only store 10 characters and will not be able to store a string of any other length.
+:-VARCHAR2:- is used for character strngs of variable length. For eg.:- VARCHAR2(10) can store any length i.e. 6,8,4 in this variable.
+-----------------------
+
+Ques:- What are Constraints?
+:-Constraints are used to specify the limit on the data type of the table.It can be specified while creating or altering the table statement.
+NOT NULL:- ensures that a NULL value cannot be stored in a column.
+UNIQUE:- this Constraints makes sure that all the values in a column are different.
+CHECK:- this Constraints ensures that all the values in a column satisfy a specific condition.
+DEFAULT:- this Constraints Consists of a set of default values for a column when no value is specified.
+INDEX:- this Constraints is used to create and retrieve data from the database very quickly.
+-----------------------
+
+Ques:- What is the difference b/w SQL and MySQL?
+:-SQL:- is a standard query language.it is the core of relational database which is used for accessing and managing database.
+:-MySQL:- is an open-source relational database management system that works on many platforms.It provides multi-user access to support many storage engines.
+-----------------------
+
+Ques:- what is the difference b/w clustered and non-clustered index?
+Clustered index:-
+:-Clustered index is used for easy retrival of data from the database  and is faster.
+:-One table can only have one clustered index.
+
+Non Clustered Index:-
+:-Non-Clustered Index is used for easy retrieval of data from the database and is slower.
+:-One table can have many non-clustered indexes.
+-------------------------
+
+Ques:- Write a SQL query to display the current date?
+:- GETDATE()
+eg:- SELECT GETDATE()
+-----------------------
+
+Ques:- 

@@ -1,0 +1,182 @@
+------Creating & Understanding Database---------
+Charset:- A character set is a set of symbols and encodings.One character set can have multiple collation.
+Collation:- Collation tells the database how to perform string matching and sorting.
+eg:- A=0,B=1,a=2,b=3
+here,A is the symbols
+0 is the encoding for A.
+The cobination of all four letters & their encodings is a character set.
+
+:- to check the list of character set , we have SHOW CHARACTER SET command.
+:- to check the Collation:- SHOW COLLATION, SHOW COLLATION WHERE CHARSET = "utf8mb4"
+
+For creating a database using SQLYOG:-
+right click on root@localhost->create database
+
+***************************
+:-to show the database using command line:- show databases;
+mysql> create database employee;
+ERROR 1007 (HY000): Can't create database 'employee'; database exists  //it gives error bcoz employee database pahle se hi hai
+
+is error ko htane ke liye:-
+mysql> create database if not exists employee;
+Query OK, 1 row affected, 1 warning (0.00 sec)
+
+it is giving warning,for check warning:-
+mysql> show warnings;
++-------+------+---------------------------------------------------+
+| Level | Code | Message                                           |
++-------+------+---------------------------------------------------+
+| Note  | 1007 | Can't create database 'employee'; database exists |
++-------+------+---------------------------------------------------+
+1 row in set (0.00 sec)
+
+***************************
+
+mysql> create database if not exists emp;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| emp                |
+| employee           |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+8 rows in set (0.00 sec)
+
+--------------------------------------DROP Database------------------------------------------------------
+:- a Drop Database statement is used to delete the existing database from the server.
+:- So, Basically the DROP DATABASE statement first drops all the tables and then deletes the database permanently  and can't be undone.
+
+mysql> drop database emp;
+Query OK, 0 rows affected (0.09 sec)
+
+
+------------------------------------Datatypes----------------------------------
+:- to store any information in a table, we need fields and every single pieces of information that is stored in the fields need to have a "data types".
+mysql uses many different data types which are generally broken into 3 main categories:-
+1.Numeric:- It actually deals with NUMBERS.
+2.Date and Time:- It deals with date or time
+3.string types:- It can contain anything like:- a number,a string,a statement,a symbol,etc.
+
+--------Numeric Data types--------
+:-INTEGER,INT,SMALLINT,TINYINT,BIGINT
+signed:-an integer that can have negative values.eg:- -2147483648 to 2147483648
+unsigned:- will have positive values with higher range. eg:- 0 to 4294967295
+
+eg:- INSERT INTO datatypes_example(sid,usid) VALUES(-10,10);
+
+---------Date nad Time-------------
+1.Date:- It stores only the date part of the datetime,we pass the values in yyyy-mm-dd.
+2.Date Time:- It stores both date and time format,we pass the values like this:- YYYY-MM-DD hh:mm:ss
+3.Timestamp:- Timestamp also stores the same value as datetime but has a minimum date of 1970-01-01 00:00:01 & maximum date of 2038-01-19 03:14:07.
+
+---------String Data types----------
+:- CHAR and VARCHAR types are declared with a length that indicates the maximum number of characters we want to store.
+eg:- CHAR(30) can hold up to 30 characters.
+
+------------------------------------------MANAGING TABLES---------------------------------------
+
+--------Database storage engines-------
+:- A database storage engine is a MySQL component that internally manages the SQL operations peformed on different table types.
+INNODB is the default and mostly used storage engine.
+
+-------Creating and Understanding Tables-------------
+craete database:- CREATE DATABASE sample_db;
+
+set the working database:- USE sample_db;
+
+//create table
+Create table <tablename> (columnname column datatype and column definition)
+eg:-
+CREATE TABLE productcategory
+(
+      id INT AUTO_INCREMENT,
+      categoryname CHAR(20) NOT NULL,
+      categorytitle VARCHAR(30) NOT NULL,
+      descriptio VARCHAR(150),
+      createdAt TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (id)
+)
+
+:- SHOW TABLES; //it will show the tables
+
+mysql> show tables;
++---------------------+
+| Tables_in_sample_db |
++---------------------+
+| productcategory     |
++---------------------+
+1 row in set (0.00 sec)
+
+:- DESC productcategory;   //this will show the details of the table.
+
+mysql> DESC productcategory;
++---------------+--------------+------+-----+-------------------+-------------------+
+| Field         | Type         | Null | Key | Default           | Extra             |
++---------------+--------------+------+-----+-------------------+-------------------+
+| id            | int          | NO   | PRI | NULL              | auto_increment    |
+| categoryname  | char(20)     | NO   |     | NULL              |                   |
+| categorytitle | varchar(30)  | NO   |     | NULL              |                   |
+| descriptio    | varchar(150) | YES  |     | NULL              |                   |
+| createdAt     | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++---------------+--------------+------+-----+-------------------+-------------------+
+5 rows in set (0.00 sec)
+
+:- To insert the records in table:- INSERT INTO TABLENAME VALUES();
+INSERT INTO productcategory
+VALUES(1,"Mobiles",'Gadgets','Some desription',NOW());
+
+mysql> select * from productcategory;
++----+--------------+---------------+-----------------+---------------------+
+| id | categoryname | categorytitle | descriptio      | createdAt           |
++----+--------------+---------------+-----------------+---------------------+
+|  1 | Mobiles      | Gadgets       | Some desription | 2022-08-22 03:27:08 |
++----+--------------+---------------+-----------------+---------------------+
+1 row in set (0.00 sec)
+
+INSERT INTO productcategory
+(categoryname,categorytitle,descriptio,createdAt)
+VALUES("Laptops",'Gadgets','Some desription2',NOW());
+
+mysql> select * from productcategory;    //id INT AUTO_INCREMENT, bcoz of auto increment 2 will add automatically here
++----+--------------+---------------+------------------+---------------------+
+| id | categoryname | categorytitle | descriptio       | createdAt           |
++----+--------------+---------------+------------------+---------------------+
+|  1 | Mobiles      | Gadgets       | Some desription  | 2022-08-22 03:27:08 |
+|  2 | Laptops      | Gadgets       | Some desription2 | 2022-08-22 03:33:22 |
++----+--------------+---------------+------------------+---------------------+
+2 rows in set (0.00 sec)
+
+Ques:- what is the use of AUTO_INCREMENT?
+:- MySQL will insert the value automatically in that column in a sequential manner even if the column is not specified in the insert statement.
+
+Ques:- what is NULL and NOT NULL?
+:- NULL means NULL values are allowed in that field.
+:- NOT NULL means you can't skip that field ,values need to be entered in that field.
+
+Ques:- What is the purpose of DEFAULT column?
+:- DEFAULT value of a column is a value used in that case when there is no value specified by user.
+
+
+----------------Introduction to FOREIGN key-------------
+:- FOREIGN key is used to establish the relationship b/w tables.
+
+Ques:- what is referential Integrity?
+:- It is the logical dependency of foreign keys on primary keys.
+
+Ques:- what is CASCADE option?
+:- CASCADE is when a primary key record is deleted, it will delete the child records.
+
+
+-----------------Creating tables with foreign keys-----------
+
+
+
+
