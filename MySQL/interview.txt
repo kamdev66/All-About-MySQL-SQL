@@ -176,6 +176,450 @@ Ques:- what is CASCADE option?
 
 
 -----------------Creating tables with foreign keys-----------
+syntax:-
+CONSTRAINT constraint_name
+FOREIGN KEY foreign_key_name 
+REFERENCES parent_table
+
+
+code:-
+mysql> CREATE TABLE products(
+    -> productid INT NOT NULL AUTO_INCREMENT,
+    -> productname VARCHAR(30) NOT NULL,
+    -> categoryid INT,
+    -> createdAt TIMESTAMP DEFAULT NOW(),
+    -> PRIMARY KEY (productid),
+    -> CONSTRAINT fk_categoryid             //here, creating foreign key
+    -> FOREIGN KEY (categoryid)
+    -> REFERENCES productcategory (id)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+
+-------------------------------------------
+mysql> INSERT INTO products (productname,categoryid)
+    -> VALUES ('Samsung',10);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`sample_db`.`products`, CONSTRAINT `fk_categoryid` FOREIGN KEY (`categoryid`) REFERENCES `productcategory` (`id`))
+
+-----------------------------------------------
+mysql> INSERT INTO products (productname,categoryid)
+    -> VALUES ('Samsung',1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO products (productname,categoryid)
+    -> VALUES ('Apple',1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO products (productname,categoryid)
+    -> VALUES ('Nokia',1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO products (productname,categoryid)
+    -> VALUES ('MACBOOK',2);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO products (productname,categoryid)
+    -> VALUES ('Motorola',2);
+Query OK, 1 row affected (0.00 sec)
+
+----------------------------------------------------
+mysql> SELECT * FROM productcategory;
++----+--------------+---------------+------------------+---------------------+
+| id | categoryname | categorytitle | descriptio       | createdAt           |
++----+--------------+---------------+------------------+---------------------+
+|  1 | Mobiles      | Gadgets       | Some desription  | 2022-08-22 03:27:08 |
+|  2 | Laptops      | Gadgets       | Some desription2 | 2022-08-22 03:33:22 |
++----+--------------+---------------+------------------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM products;
++-----------+-------------+------------+---------------------+
+| productid | productname | categoryid | createdAt           |
++-----------+-------------+------------+---------------------+
+|         3 | Samsung     |          1 | 2022-08-23 00:29:06 |
+|         4 | Apple       |          1 | 2022-08-23 00:29:06 |
+|         5 | Nokia       |          1 | 2022-08-23 00:29:06 |
+|         6 | MACBOOK     |          2 | 2022-08-23 00:29:06 |
+|         7 | Motorola    |          2 | 2022-08-23 00:29:19 |
+|         8 | Samsung     |          1 | 2022-08-23 00:29:57 |
+|         9 | Apple       |          1 | 2022-08-23 00:29:57 |
+|        10 | Nokia       |          1 | 2022-08-23 00:29:57 |
+|        11 | MACBOOK     |          2 | 2022-08-23 00:29:57 |
+|        12 | Motorola    |          2 | 2022-08-23 00:29:57 |
++-----------+-------------+------------+---------------------+
+10 rows in set (0.00 sec)
+
+
+
+
+------------------------------------------
+mysql> DELETE FROM productcategory WHERE id=1;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`sample_db`.`products`, CONSTRAINT `fk_categoryid` FOREIGN KEY (`categoryid`) REFERENCES `productcategory` (`id`))
+
+it is giving error bcoz the id that we tried to delete is having the reference in the product table.
+
+----------------
+mysql> UPDATE productcategory SET id=10 WHERE id=1;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> ALTER TABLE products DROP FOREIGN KEY fk_categoryid;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql> ALTER TABLE products ADD
+    ->       CONSTRAINT fk_categoryid
+    ->       FOREIGN KEY (categoryid)
+    ->       REFERENCES productcategory (id)
+    ->                ON UPDATE SET NULL
+    ->                ON DELETE SET NULL;
+Query OK, 10 rows affected (0.06 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM productcategory;
++----+--------------+---------------+------------------+---------------------+
+| id | categoryname | categorytitle | descriptio       | createdAt           |
++----+--------------+---------------+------------------+---------------------+
+|  2 | Laptops      | Gadgets       | Some desription2 | 2022-08-22 03:33:22 |
+| 10 | Mobiles      | Gadgets       | Some desription  | 2022-08-22 03:27:08 |
++----+--------------+---------------+------------------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM products;
++-----------+-------------+------------+---------------------+
+| productid | productname | categoryid | createdAt           |
++-----------+-------------+------------+---------------------+
+|         3 | Samsung     |       NULL | 2022-08-23 00:29:06 |
+|         4 | Apple       |       NULL | 2022-08-23 00:29:06 |
+|         5 | Nokia       |       NULL | 2022-08-23 00:29:06 |
+|         6 | MACBOOK     |          2 | 2022-08-23 00:29:06 |
+|         7 | Motorola    |          2 | 2022-08-23 00:29:19 |
+|         8 | Samsung     |       NULL | 2022-08-23 00:29:57 |
+|         9 | Apple       |       NULL | 2022-08-23 00:29:57 |
+|        10 | Nokia       |       NULL | 2022-08-23 00:29:57 |
+|        11 | MACBOOK     |          2 | 2022-08-23 00:29:57 |
+|        12 | Motorola    |          2 | 2022-08-23 00:29:57 |
++-----------+-------------+------------+---------------------+
+10 rows in set (0.00 sec)
+
+
+:- The purpose of ALTER statement is to change the structure of the table
+----------------
+
+-------------------------------ALTER Table command--------------------------
+What modifications can we do with ALTER TABLE command?
+:- Add Columns to table 
+:- Change  the Datatype of an existing column
+:- Rename Columns
+:- Change column position
+:- Delete column
+:- Rename TABLE
+we have different commands to fullfill all these modifications , which we need to use with the "ALTER TABLE" command.
+
+:- The first one is ADD keyword ,which is used to add one or more columns to the table.
+Syntax:- ALTER TABLE <table_name>
+         ADD
+         <new_column_name><column_definition>
+         [FIRST | AFTER column_name];
+
+
+check existing definition of products table:-
+mysql> DESC products;
++-------------+-------------+------+-----+-------------------+-------------------+
+| Field       | Type        | Null | Key | Default           | Extra             |
++-------------+-------------+------+-----+-------------------+-------------------+
+| productid   | int         | NO   | PRI | NULL              | auto_increment    |
+| productname | varchar(30) | NO   |     | NULL              |                   |
+| categoryid  | int         | YES  | MUL | NULL              |                   |
+| createdAt   | timestamp   | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------+-------------+------+-----+-------------------+-------------------+
+4 rows in set (0.00 sec)
+
+--------------------------------
+Add one column to this table:-
+
+mysql> ALTER TABLE products
+    -> ADD productimage BLOB;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql> DESC products;
++--------------+-------------+------+-----+-------------------+-------------------+
+| Field        | Type        | Null | Key | Default           | Extra             |
++--------------+-------------+------+-----+-------------------+-------------------+
+| productid    | int         | NO   | PRI | NULL              | auto_increment    |
+| productname  | varchar(30) | NO   |     | NULL              |                   |
+| categoryid   | int         | YES  | MUL | NULL              |                   |
+| createdAt    | timestamp   | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| productimage | blob        | YES  |     | NULL              |                   |
++--------------+-------------+------+-----+-------------------+-------------------+
+5 rows in set (0.00 sec)
+
+Note:- we have not provided the order for the column, so by default it will add it as the last column on the table.
+
+mysql> ALTER TABLE products
+    -> ADD price DECIMAL(7.2) FIRST,
+    -> ADD sellingprice DECIMAL(8,2) AFTER categoryid;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql> DESC products;
++--------------+--------------+------+-----+-------------------+-------------------+
+| Field        | Type         | Null | Key | Default           | Extra             |
++--------------+--------------+------+-----+-------------------+-------------------+
+| price        | decimal(7,0) | YES  |     | NULL              |                   |
+| productid    | int          | NO   | PRI | NULL              | auto_increment    |
+| productname  | varchar(30)  | NO   |     | NULL              |                   |
+| categoryid   | int          | YES  | MUL | NULL              |                   |
+| sellingprice | decimal(8,2) | YES  |     | NULL              |                   |
+| createdAt    | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| productimage | blob         | YES  |     | NULL              |                   |
++--------------+--------------+------+-----+-------------------+-------------------+
+7 rows in set (0.00 sec)
+
+----------------------------
+Next option that we have is MODIFY,which is used to change the column definition i.e, datatype of the column
+
+Syntax:- ALTER TABLE <table_name>
+         MODIFY
+         <new_column_name><column_definition>
+         [FIRST | AFTER column_name];
+
+---------
+mysql> ALTER TABLE products
+    -> MODIFY price DECIMAL(25,5) AFTER sellingprice;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql> DESC products;
++--------------+---------------+------+-----+-------------------+-------------------+
+| Field        | Type          | Null | Key | Default           | Extra             |
++--------------+---------------+------+-----+-------------------+-------------------+
+| productid    | int           | NO   | PRI | NULL              | auto_increment    |
+| productname  | varchar(30)   | NO   |     | NULL              |                   |
+| categoryid   | int           | YES  | MUL | NULL              |                   |
+| sellingprice | decimal(8,2)  | YES  |     | NULL              |                   |
+| price        | decimal(25,5) | YES  |     | NULL              |                   |
+| createdAt    | timestamp     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| productimage | blob          | YES  |     | NULL              |                   |
++--------------+---------------+------+-----+-------------------+-------------------+
+7 rows in set (0.00 sec)
+
+--------------------
+Next option is CHANGE , which does all the functions that modify does & on top of that it can also rename the column
+syntax:-
+ALTER TABLE <table_name>
+CHANGE <original_name> <new_name> <column_definition>
+
+-----------
+mysql> DESC products;
++--------------+---------------+------+-----+-------------------+-------------------+
+| Field        | Type          | Null | Key | Default           | Extra             |
++--------------+---------------+------+-----+-------------------+-------------------+
+| productid    | int           | NO   | PRI | NULL              | auto_increment    |
+| productname  | varchar(30)   | NO   |     | NULL              |                   |
+| categoryid   | int           | YES  | MUL | NULL              |                   |
+| productprice | decimal(25,5) | YES  |     | NULL              |                   |
+| sellingprice | decimal(8,2)  | YES  |     | NULL              |                   |
+| createdAt    | timestamp     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| productimage | blob          | YES  |     | NULL              |                   |
++--------------+---------------+------+-----+-------------------+-------------------+
+7 rows in set (0.00 sec)
+
+------------
+Next option is DROP , which is used to delete the column from the table & also the easiest among all.
+
+mysql> ALTER TABLE products
+    -> DROP productimage;
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESC products;
++--------------+---------------+------+-----+-------------------+-------------------+
+| Field        | Type          | Null | Key | Default           | Extra             |
++--------------+---------------+------+-----+-------------------+-------------------+
+| productid    | int           | NO   | PRI | NULL              | auto_increment    |
+| productname  | varchar(30)   | NO   |     | NULL              |                   |
+| categoryid   | int           | YES  | MUL | NULL              |                   |
+| productprice | decimal(25,5) | YES  |     | NULL              |                   |
+| sellingprice | decimal(8,2)  | YES  |     | NULL              |                   |
+| createdAt    | timestamp     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++--------------+---------------+------+-----+-------------------+-------------------+
+6 rows in set (0.00 sec)
+
+----------------------
+We can also rename the table name by using RENAME keyword.
+
+mysql> ALTER TABLE products
+    -> RENAME products_table;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DESC products_table;
++--------------+---------------+------+-----+-------------------+-------------------+
+| Field        | Type          | Null | Key | Default           | Extra             |
++--------------+---------------+------+-----+-------------------+-------------------+
+| productid    | int           | NO   | PRI | NULL              | auto_increment    |
+| productname  | varchar(30)   | NO   |     | NULL              |                   |
+| categoryid   | int           | YES  | MUL | NULL              |                   |
+| productprice | decimal(25,5) | YES  |     | NULL              |                   |
+| sellingprice | decimal(8,2)  | YES  |     | NULL              |                   |
+| createdAt    | timestamp     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++--------------+---------------+------+-----+-------------------+-------------------+
+6 rows in set (0.00 sec)
+
+now,change the table name back to that it was before.
+mysql> ALTER TABLE products_table
+    -> RENAME products;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> DESC products;
++--------------+---------------+------+-----+-------------------+-------------------+
+| Field        | Type          | Null | Key | Default           | Extra             |
++--------------+---------------+------+-----+-------------------+-------------------+
+| productid    | int           | NO   | PRI | NULL              | auto_increment    |
+| productname  | varchar(30)   | NO   |     | NULL              |                   |
+| categoryid   | int           | YES  | MUL | NULL              |                   |
+| productprice | decimal(25,5) | YES  |     | NULL              |                   |
+| sellingprice | decimal(8,2)  | YES  |     | NULL              |                   |
+| createdAt    | timestamp     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++--------------+---------------+------+-----+-------------------+-------------------+
+6 rows in set (0.01 sec)
+
+
+
+-----------------------------------------MODIFYING DATA IN MYSQL----------------------------------
+
+
+---Insert Query(Inserting a Record to table)------
+Ques:- how do we insert data in the table?
+:- we have an "INSERT" statement to add new records to the table.
+
+SYNTAX:-
+INSERT INTO <tablename>
+(col1,col2,col3)
+VALUES
+(val1,val2,val3);
+
+Note:- here,column names are optional - if we don't specify the column names then we have to provide values for all the columns in the table.
+
+mysql> INSERT INTO productcategory
+    -> VALUES
+    -> (DEFAULT,'category1','cate1 title',DEFAULT,DEFAULT);
+Query OK, 1 row affected (0.01 sec)
+
+mysql>
+mysql> SELECT * FROM productcategory;
++----+--------------+---------------+------------------+---------------------+
+| id | categoryname | categorytitle | descriptio       | createdAt           |
++----+--------------+---------------+------------------+---------------------+
+|  2 | Laptops      | Gadgets       | Some desription2 | 2022-08-22 03:33:22 |
+| 10 | Mobiles      | Gadgets       | Some desription  | 2022-08-22 03:27:08 |
+| 11 | category1    | cate1 title   | NULL             | 2022-08-23 01:37:43 |
++----+--------------+---------------+------------------+---------------------+
+3 rows in set (0.00 sec)
+
+
+
+-----------INSERT IGNORE INTO & ON DUPLICATE KEY-----------
+INSERT IGNORE INTO and INSERT ON DUPLICATE KEY UPDATE are MySQL's extension over the standard INSERT statement.
+
+Suppose, if we try to enter the value in the primary key with the value that already exists in the table,MySQL will throw us an error.
+To overcome such a situation we have INSERT IGNORE INTO CLAUSE .
+
+
+mysql> SELECT * FROM productcategory;
++----+--------------+---------------+------------------+---------------------+
+| id | categoryname | categorytitle | descriptio       | createdAt           |
++----+--------------+---------------+------------------+---------------------+
+|  2 | Laptops      | Gadgets       | Some desription2 | 2022-08-22 03:33:22 |
+| 10 | Mobiles      | Gadgets       | Some desription  | 2022-08-22 03:27:08 |
+| 11 | category1    | cate1 title   | NULL             | 2022-08-23 01:37:43 |
+| 12 | category1    | cate1 title   | NULL             | 2022-08-23 02:48:59 |
+| 13 | category1    | cate1 title   | NULL             | 2022-08-23 02:49:04 |
+| 14 | category1    | cate1 title   | NULL             | 2022-08-23 02:49:05 |
+| 15 | category1    | cate1 title   | NULL             | 2022-08-23 02:49:11 |
+| 16 | category1    | cate1 title   | NULL             | 2022-08-23 02:49:23 |
+| 18 | NEW category | IGNORE TEST   | NULL             | 2022-08-23 02:53:23 |
++----+--------------+---------------+------------------+---------------------+
+9 rows in set (0.00 sec)
+
+mysql> INSERT INTO productcategory (id,categoryname,categorytitle)
+    -> VALUES
+    -> (18,'NEW category','IGNORE TEST');
+ERROR 1062 (23000): Duplicate entry '18' for key 'productcategory.PRIMARY'
+
+:- what happens if we use INSERT  IGNORE INTO:-
+
+mysql> INSERT IGNORE INTO productcategory (id,categoryname,categorytitle)
+    -> VALUES
+    -> (18,'NEW category','IGNORE TEST');
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+
+
+---------ON DUPLICATE KEY-------
+:- It updates the value if any primary key constraints fail i.e., if any duplicate key is found it will update the column provided in ON DUPLICATE KEY UPDATE clause.
+
+mysql> INSERT INTO productcategory (id,categoryname,categorytitle)
+    -> VALUES
+    -> (18,'NEW category','IGNORE TEST')
+    -> ON DUPLICATE KEY UPDATE categoryname='Updated category';
+Query OK, 2 rows affected (0.01 sec)
+
+
+
+---------INSERTING HIERARCHICAL DATA-------------
+
+
+
+
+
+
+
+
+
+----------Update Single Row--------------
+syntax:- 
+UPDATE <table_name>
+SET
+   col_name1=val1,
+   col_name2=val2,
+WHERE <condition>
+
+Note:- if we don't specify WHERE clause MYSQL will update all the records in the table.
+
+mysql> UPDATE products
+    -> SET productprice=10,
+    ->     sellingprice=20
+    -> WHERE productid=5;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+------------updating multiple records-------------
+mysql> UPDATE products
+    -> SET categoryid=50
+    -> WHERE categoryid=NULL;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+
+
+
+------------------------------------SORTING DATA------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
 
